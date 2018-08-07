@@ -1,0 +1,20 @@
+---
+- name:
+  get_url:
+    url: "https://raw.githubusercontent.com/{{ github_user }}/docker-{{ container_name }}/{{ github_branch }}/readme-vars.yml"
+    dest: /tmp/readme-vars.yml
+
+- name: include vars file for this project
+  include_vars:
+    file: "/tmp/readme-vars.yml"
+
+- name: create destination dir for generated readme
+  file:
+    path: "readme/{{ project_name }}"
+    state: directory
+
+- name: write readme file
+  template:
+    src: ../templates/README.md.j2
+    dest: "readme/{{ project_name }}/README.md"
+delegate_to: localhost
