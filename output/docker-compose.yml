@@ -3,154 +3,40 @@
 ---
 version: "2"
 services:
-  letsencrypt:
-    image: linuxserver/letsencrypt
-    container_name: le
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
     volumes:
-      - /opt/appdata/letsencrypt/config:/config
+      - /opt/appdata/nextcloud/html:/var/www/html
+      - /opt/appdata/nextcloud/apps:/var/www/html/custom_apps
+      - /opt/appdata/nextcloud/config:/var/www/html/config
+      - /opt/appdata/nextcloud/data:/var/www/html/data
+      - /opt/appdata/nextcloud/theme:/var/www/html/themes
     ports:
-      - 80:80
-      - 443:443
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - EMAIL=alexktz@gmail.com
-      - URL=ktz.cloud
-      - SUBDOMAINS=nc
-      - ONLY_SUBDOMAINS=true
-      - DHLEVEL=4096
-      - TZ=Europe/London
-      - VALIDATION=http
-    depends_on:
-      - nzbget
-      - sonarr
-      - radarr
-      - tautulli
-      - smokeping
-      - booksonic
+      - 8081:80
     mem_limit: 256m
-    restart: always
-  plex:
-    image: plexinc/pms-docker
-    container_name: plex
-    network_mode: host
-    volumes:
-      - /opt/appdata/plex:/config
-      - /mnt/storage:/data
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - PLEX_CLAIM="blah"
-    mem_limit: 4096m
     restart: unless-stopped
-  nzbget:
-    image: linuxserver/nzbget
-    container_name: nzbget
+
+  unifi:
+    image: linuxserver/unifi
+    container_name: unifi
     volumes:
-      - /opt/appdata/nzbget/config:/config
-      - /mnt/disk1/downloads:/downloads
+      - /opt/appdata/unifi:/config
     environment:
-      - PUID=1000
-      - PGID=1000
-    restart: unless-stopped
-  sonarr:
-    image: linuxserver/sonarr
-    container_name: sonarr
-    volumes:
-      - /opt/appdata/appdata/sonarr:/config
-      - /mnt/disk1/downloads/complete/tv:/downloads/complete/tv
-      - /mnt/storage/tv:/tv
-    environment:
-      - PUID=1000
-      - PGID=1000
-    depends_on:
-      - nzbget
-    restart: unless-stopped
-  radarr:
-    image: linuxserver/radarr
-    container_name: radarr
-    volumes:
-      - /opt/appdata/radarr:/config
-      - /mnt/storage/movies:/movies
-      - /mnt/disk1/downloads/complete/movies:/downloads/complete/movies
-    environment:
-      - PUID=1000
-      - PGID=1000
-    restart: unless-stopped
-  smokeping:
-    image: linuxserver/smokeping
-    container_name: smokeping
-    volumes:
-      - /opt/appdata/smokeping/config:/config
-      - /opt/appdata/smokeping/data:/data
-    environment:
-      - PUID=1000
-      - PGID=1000
-    mem_limit: 128m
-    restart: unless-stopped
-  sync:
-    image: linuxserver/resilio-sync
-    container_name: sync
-    ports:
-      - 8888:8888
-      - 55555:55555
-    environment:
-      - PUID=1000
-      - PGID=1000
-    restart: unless-stopped
-  duplicati:
-    image: linuxserver/duplicati
-    container_name: duplicati
-    volumes:
-      - /opt/appdata/duplicati:/config
-      - /mnt/storage/backups:/backups
-      - /mnt/storage:/source/storage
-      - /opt:/source/opt
-    ports:
-      - 8200:8200
-    environment:
-      - PUID=1000
-      - PGID=1000
-    hostname: BLAH
-    restart: always
-  airsonic:
-    image: linuxserver/airsonic
-    container_name: airsonic
-    volumes:
-      - /opt/appdata/airsonic:/config
-      - /mnt/storage/music:/music
-    ports:
-      - 4040:4040
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - CONTEXT_PATH=airsonic
-    mem_limit: 1024m
-    restart: unless-stopped
-  booksonic:
-    image: linuxserver/booksonic
-    container_name: booksonic
-    volumes:
-      - /opt/appdata/booksonic:/config
-      - /mnt/storage/audiobooks:/books
-    ports:
-      - 4040:4040
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - CONTEXT_PATH=booksonic
-    mem_limit: 1024m
-    restart: unless-stopped
-  tautulli:
-    image: linuxserver/tautulli
-    container_name: tautulli
-    volumes:
-      - /opt/appdata/tautulli:/config
-      - /opt/appdata/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro
-    environment:
-      - PUID=1000
-      - PGID=1000
-    depends_on:
-      - plex
+      - PUID=1313
+      - PGID=1313
     mem_limit: 512m
     restart: unless-stopped
+
+  quassel:
+    image: linuxserver/quassel
+    container_name: quassel
+    volumes:
+      - /opt/appdata/quassel:/config
+    ports:
+      - 4242:4242
+    environment:
+      - PUID=1313
+      - PGID=1313
+    mem_limit: 128m
+

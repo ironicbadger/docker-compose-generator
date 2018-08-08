@@ -4,6 +4,7 @@
 version: "2"
 services:
 {% for item in containers %}
+{% if item.active %}
   {{ item.service_name }}:
     image: {{ item.image }}
     container_name: {{ item.container_name }}
@@ -49,5 +50,7 @@ services:
 {% endif %}
 {% if item.restart is defined %}
     restart: {{ item.restart }}
+{% endif %}
+
 {% endif %}
 {% endfor %}

@@ -1,0 +1,151 @@
+---
+global_env_vars:
+  - "PUID={{ puid }}"
+  - "PGID={{ pgid }}"
+download_path: /mnt/disk1/downloads
+
+containers:
+  - service_name: letsencrypt
+    active: true
+    image: linuxserver/letsencrypt
+    container_name: le
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "{{ appdata_path }}/letsencrypt/config:{{ container_config_path }}"
+    restart: always
+    depends_on:
+      - nzbget
+      - sonarr
+      - radarr
+      - tautulli
+      - smokeping
+      - booksonic
+    include_global_env_vars: true
+    environment:
+      - EMAIL=alexktz@gmail.com
+      - URL=ktz.cloud
+      - SUBDOMAINS=nc
+      - ONLY_SUBDOMAINS=true
+      - DHLEVEL=4096
+      - TZ=Europe/London
+      - VALIDATION=http
+    mem_limit: 256m
+  - service_name: plex
+    active: true
+    image: plexinc/pms-docker
+    container_name: plex
+    network_mode: host
+    mem_limit: 4096m
+    volumes:
+      - "{{ appdata_path }}/plex:{{ container_config_path }}"
+      - "/mnt/storage:{{ container_data_path }}"
+    include_global_env_vars: true
+    environment:
+      - "PLEX_CLAIM=\"blah\""
+    restart: "{{ unless_stopped }}"
+  - service_name: nzbget
+    active: true
+    image: linuxserver/nzbget
+    container_name: nzbget
+    volumes:
+      - "{{ appdata_path }}/nzbget/config:{{ container_config_path }}"
+      - "{{ download_path }}:/downloads"
+    restart: "{{ unless_stopped }}"
+    include_global_env_vars: true
+  - service_name: sonarr
+    active: true
+    image: linuxserver/sonarr
+    container_name: sonarr
+    depends_on:
+      - nzbget
+    volumes:
+      - "{{ appdata_path }}/appdata/sonarr:{{ container_config_path }}"
+      - "{{ download_path }}/complete/tv:/downloads/complete/tv"
+      - /mnt/storage/tv:/tv
+    restart: "{{ unless_stopped }}"
+    include_global_env_vars: true
+  - service_name: radarr
+    active: true
+    image: linuxserver/radarr
+    container_name: radarr
+    volumes:
+      - "{{ appdata_path }}/radarr:{{ container_config_path }}"
+      - /mnt/storage/movies:/movies
+      - "{{ download_path }}/complete/movies:/downloads/complete/movies"
+    restart: "{{ unless_stopped }}"
+    include_global_env_vars: true
+  - service_name: smokeping
+    active: true
+    image: linuxserver/smokeping
+    container_name: smokeping
+    mem_limit: 128m
+    volumes:
+      - "{{ appdata_path }}/smokeping/config:{{ container_config_path }}"
+      - "{{ appdata_path }}/smokeping/data:{{ container_data_path }}"
+    restart: "{{ unless_stopped }}"
+    include_global_env_vars: true
+  - service_name: sync
+    active: true
+    image: linuxserver/resilio-sync
+    container_name: sync
+    ports:
+      - "8888:8888"
+      - "55555:55555"
+    restart: "{{ unless_stopped }}"
+    include_global_env_vars: true
+  - service_name: duplicati
+    active: true
+    image: linuxserver/duplicati
+    hostname: BLAH
+    container_name: duplicati
+    ports:
+      - "8200:8200"
+    volumes:
+      - "{{ appdata_path }}/duplicati:{{ container_config_path }}"
+      - /mnt/storage/backups:/backups
+      - /mnt/storage:/source/storage
+      - /opt:/source/opt
+    include_global_env_vars: true
+    restart: always
+  - service_name: airsonic
+    active: true
+    image: linuxserver/airsonic
+    container_name: airsonic
+    mem_limit: 1024m
+    ports:
+      - "4040:4040"
+    volumes:
+      - "{{ appdata_path }}/airsonic:{{ container_config_path }}"
+      - /mnt/storage/music:/music
+    include_global_env_vars: true
+    environment:
+      - CONTEXT_PATH=airsonic
+    restart: "{{ unless_stopped }}"
+  - service_name: booksonic
+    active: true
+    image: linuxserver/booksonic
+    container_name: booksonic
+    mem_limit: 1024m
+    ports:
+      - "4040:4040"
+    volumes:
+      - "{{ appdata_path }}/booksonic:{{ container_config_path }}"
+      - /mnt/storage/audiobooks:/books
+    include_global_env_vars: true
+    environment:
+      - CONTEXT_PATH=booksonic
+    restart: "{{ unless_stopped }}"
+  - service_name: tautulli
+    active: true
+    image: linuxserver/tautulli
+    container_name: tautulli
+    mem_limit: 512m
+    depends_on:
+      - plex
+    include_global_env_vars: true
+    volumes:
+      - "{{ appdata_path }}/tautulli:{{ container_config_path }}"
+      - "{{ appdata_path }}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro"
+    restart: "{{ unless_stopped }}"
