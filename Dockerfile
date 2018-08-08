@@ -6,7 +6,7 @@ LABEL maintainer="ironicbadger"
 RUN \
  echo "**** install build packages ****" && \
  apk add --no-cache \
-   ansible bash
+   ansible
 
 COPY . /ansible
 WORKDIR /ansible

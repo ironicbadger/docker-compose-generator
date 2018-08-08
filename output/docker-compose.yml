@@ -1,0 +1,20 @@
+# Ansible managed
+
+---
+version: "2"
+services:
+  image: linuxserver/plex
+    container_name: plex
+    network_mode: host
+    volumes:
+      - /opt/appdata/plex:/config
+      - /mnt/storage:/data
+    environment:
+      - PLEX_CLAIM: "blah"
+      - PUID: 1000
+      - PGID: 1000
+    restart: unless-stopped
+  image: linuxserver/smokeping
+    container_name: smokeping
+    ports:
+      - 123:123

@@ -1,0 +1,10 @@
+---
+
+pgid: 1000
+puid: 1000
+
+appdata_path: /opt/appdata
+container_config_path: /config
+container_data_path: /data
+
+unless_stopped: "unless-stopped"

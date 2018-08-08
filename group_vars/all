@@ -1,0 +1,20 @@
+---
+
+containers:
+  - service_name: plex
+    image: linuxserver/plex
+    container_name: plex
+    network_mode: host
+    volumes:
+      - "{{ appdata_path }}/plex:{{ container_config_path }}"
+      - "/mnt/storage:{{ container_data_path }}"
+    environment:
+      - "PLEX_CLAIM: \"blah\""
+      - "PUID: {{ puid }}"
+      - "PGID: {{ pgid }}"
+    restart: "{{ unless_stopped }}"
+  - service_name: smokeping
+    image: linuxserver/smokeping
+    container_name: smokeping
+    ports:
+      - 123:123
