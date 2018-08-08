@@ -3,7 +3,8 @@
 ---
 version: "2"
 services:
-  image: linuxserver/letsencrypt
+  letsencrypt:
+    image: linuxserver/letsencrypt
     container_name: le
     volumes:
       - /opt/appdata/letsencrypt/config:/config
@@ -29,7 +30,8 @@ services:
       - booksonic
     mem_limit: 256m
     restart: always
-  image: plexinc/pms-docker
+  plex:
+    image: plexinc/pms-docker
     container_name: plex
     network_mode: host
     volumes:
@@ -41,7 +43,8 @@ services:
       - PLEX_CLAIM="blah"
     mem_limit: 4096m
     restart: unless-stopped
-  image: linuxserver/nzbget
+  nzbget:
+    image: linuxserver/nzbget
     container_name: nzbget
     volumes:
       - /opt/appdata/nzbget/config:/config
@@ -50,7 +53,8 @@ services:
       - PUID=1000
       - PGID=1000
     restart: unless-stopped
-  image: linuxserver/sonarr
+  sonarr:
+    image: linuxserver/sonarr
     container_name: sonarr
     volumes:
       - /opt/appdata/appdata/sonarr:/config
@@ -62,7 +66,8 @@ services:
     depends_on:
       - nzbget
     restart: unless-stopped
-  image: linuxserver/radarr
+  radarr:
+    image: linuxserver/radarr
     container_name: radarr
     volumes:
       - /opt/appdata/radarr:/config
@@ -72,7 +77,8 @@ services:
       - PUID=1000
       - PGID=1000
     restart: unless-stopped
-  image: linuxserver/smokeping
+  smokeping:
+    image: linuxserver/smokeping
     container_name: smokeping
     volumes:
       - /opt/appdata/smokeping/config:/config
@@ -82,7 +88,8 @@ services:
       - PGID=1000
     mem_limit: 128m
     restart: unless-stopped
-  image: linuxserver/resilio-sync
+  sync:
+    image: linuxserver/resilio-sync
     container_name: sync
     ports:
       - 8888:8888
@@ -91,7 +98,8 @@ services:
       - PUID=1000
       - PGID=1000
     restart: unless-stopped
-  image: linuxserver/duplicati
+  duplicati:
+    image: linuxserver/duplicati
     container_name: duplicati
     volumes:
       - /opt/appdata/duplicati:/config
@@ -105,7 +113,8 @@ services:
       - PGID=1000
     hostname: BLAH
     restart: always
-  image: linuxserver/airsonic
+  airsonic:
+    image: linuxserver/airsonic
     container_name: airsonic
     volumes:
       - /opt/appdata/airsonic:/config
@@ -118,7 +127,8 @@ services:
       - CONTEXT_PATH=airsonic
     mem_limit: 1024m
     restart: unless-stopped
-  image: linuxserver/booksonic
+  booksonic:
+    image: linuxserver/booksonic
     container_name: booksonic
     volumes:
       - /opt/appdata/booksonic:/config
@@ -130,4 +140,17 @@ services:
       - PGID=1000
       - CONTEXT_PATH=booksonic
     mem_limit: 1024m
+    restart: unless-stopped
+  tautulli:
+    image: linuxserver/tautulli
+    container_name: tautulli
+    volumes:
+      - /opt/appdata/tautulli:/config
+      - /opt/appdata/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+    depends_on:
+      - plex
+    mem_limit: 512m
     restart: unless-stopped

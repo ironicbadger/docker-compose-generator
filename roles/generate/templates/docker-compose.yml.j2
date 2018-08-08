@@ -4,7 +4,8 @@
 version: "2"
 services:
 {% for item in containers %}
-  image: {{ item.image }}
+  {{ item.service_name }}:
+    image: {{ item.image }}
     container_name: {{ item.container_name }}
 {% if item.network_mode is defined %}
     network_mode: {{ item.network_mode }}

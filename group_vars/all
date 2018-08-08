@@ -127,6 +127,14 @@ containers:
     environment:
       - CONTEXT_PATH=booksonic
     restart: "{{ unless_stopped }}"
-
-
-
+  - service_name: tautulli
+    image: linuxserver/tautulli
+    container_name: tautulli
+    mem_limit: 512m
+    depends_on:
+      - plex
+    include_global_env_vars: true
+    volumes:
+      - "{{ appdata_path }}/tautulli:{{ container_config_path }}"
+      - "{{ appdata_path }}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro"
+    restart: "{{ unless_stopped }}"
