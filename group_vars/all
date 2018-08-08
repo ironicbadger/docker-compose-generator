@@ -114,9 +114,9 @@ containers:
     environment:
       - CONTEXT_PATH=airsonic
     restart: "{{ unless_stopped }}"
-  - service_name: airsonic
-    image: linuxserver/airsonic
-    container_name: airsonic
+  - service_name: booksonic
+    image: linuxserver/booksonic
+    container_name: booksonic
     mem_limit: 1024m
     ports:
       - "4040:4040"

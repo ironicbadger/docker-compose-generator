@@ -118,8 +118,8 @@ services:
       - CONTEXT_PATH=airsonic
     mem_limit: 1024m
     restart: unless-stopped
-  image: linuxserver/airsonic
-    container_name: airsonic
+  image: linuxserver/booksonic
+    container_name: booksonic
     volumes:
       - /opt/appdata/booksonic:/config
       - /mnt/storage/audiobooks:/books
